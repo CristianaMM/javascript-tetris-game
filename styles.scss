@@ -1,0 +1,30 @@
+* {
+    box-sizing: border-box;
+}
+
+.container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center ;
+    align-items: center;
+}
+
+.board {
+    height: 600px;
+    width: 300px;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: lightblue;
+    &__square {
+        height: 30px;
+        width: 30px;
+        border: 1px solid lightgray ;
+    }
+    .block {
+        background-color: lightsalmon;
+    }
+}
+
+
+
