@@ -1,39 +1,91 @@
+// types of blocks
+const BLOCK_TYPE = {
+  L: "L",
+  T: "T",
+  O: "O",
+  S: "S",
+  Z: "Z",
+  I: "I",
+};
+
+// amount of squares in each row of the board
+const BOARD_WIDTH = 10;
+
 class Board {
   constructor() {
     this.board = document.querySelector(".board");
   }
 
-  // Add 200 divs in the board grid
   createBoard() {
+    // Add 200 divs in the board grid - squares
     for (let i = 0; i < 200; i++) {
       const div = document.createElement("div");
       div.classList.add("board__square");
       this.board.appendChild(div);
     }
+    // Add blocked row in the lower part of the board
+    for (let i = 0; i < 10; i++) {
+      const div = document.createElement("div");
+      div.classList.add("board__square", "blocked");
+      this.board.appendChild(div);
+    }
 
     //Add all squares in board to an array so each one have an index number
     this.squares = document.querySelectorAll(".board div");
+
+    this.createListeners();
   }
 
   drawBlock() {
-    const currentSquares = this.block.getCurrentSquares();
-    currentSquares.forEach((square) =>
-      this.squares[square].classList.add("block")
+    const currentSquares = this.block.getCurrentBlockSquares();
+    currentSquares.forEach((squareIndex) =>
+      this.squares[squareIndex].classList.add("block")
     );
     this.lastPositions = currentSquares;
   }
 
   undrawBlock() {
-    const currentSquares = this.lastPositions || [];
-    currentSquares.forEach((square) =>
+    const lastPositionSquares = this.lastPositions || [];
+    lastPositionSquares.forEach((square) =>
       this.squares[square].classList.remove("block")
     );
   }
 
   generateBlock() {
-    if (!this.block) this.block = new Block(BLOCK_TYPE.Z);
+    if (!this.block) this.block = new Block(BLOCK_TYPE.T);
   }
 
+  // Event Listeners to handle key press (move and rotate block)
+  createListeners() {
+    document.addEventListener("keydown", (e) => {
+      switch (e.code) {
+        case "ArrowDown":
+          this.undrawBlock();
+          this.block.setPosition(10);
+          this.drawBlock();
+          break;
+        case "ArrowUp":
+          this.undrawBlock();
+          this.block.setOrientation();
+          this.drawBlock();
+          break;
+        case "ArrowRight":
+          this.undrawBlock();
+          this.block.setPosition(1);
+          this.drawBlock();
+          break;
+        case "ArrowLeft":
+          this.undrawBlock();
+          this.block.setPosition(-1);
+          this.drawBlock();
+          break;
+
+        default:
+          break;
+      }
+    });
+  }
+  //initiate timer, every second block will go down 1 row
   init() {
     // don't forget to clear timer in the end of the game
     this.timer = setInterval(() => {
@@ -45,25 +97,14 @@ class Board {
   }
 }
 
-const BLOCK_TYPE = {
-  L: "L",
-  T: "T",
-  O: "O",
-  S: "S",
-  Z: "Z",
-  I: "I",
-};
-
-// amount of squares in each row
-const BOARD_WIDTH = 10;
-
 class Block {
   //initialize a new block with a given blockType
   constructor(blockType) {
     this.blockType = blockType;
     this.position = 4; // initial position when block enters the board (middle top of the board)
-    this.orientation = 0; // first array of positions of this.orientation. When block enters the board will always be in the first orientation (index=0)
+    this.orientation = 0; // first position of this.orientationsArray. When block enters the board will always be in the first orientation (index=0)
 
+    //define this.orientationsArray (all possible orientatios for the type of block)
     switch (this.blockType) {
       case BLOCK_TYPE.L:
         this.orientationsArray = [
@@ -96,37 +137,17 @@ class Block {
         break;
       case BLOCK_TYPE.S:
         this.orientationsArray = [
-          [
-            BOARD_WIDTH + 1,
-            BOARD_WIDTH + 2,
-            2 * BOARD_WIDTH,
-            2 * BOARD_WIDTH + 1,
-          ],
+          [1, 2, BOARD_WIDTH, BOARD_WIDTH + 1],
           [0, BOARD_WIDTH, BOARD_WIDTH + 1, 2 * BOARD_WIDTH + 1],
-          [
-            BOARD_WIDTH + 1,
-            BOARD_WIDTH + 2,
-            2 * BOARD_WIDTH,
-            2 * BOARD_WIDTH + 1,
-          ],
+          [1, 2, BOARD_WIDTH, BOARD_WIDTH + 1],
           [0, BOARD_WIDTH, BOARD_WIDTH + 1, 2 * BOARD_WIDTH + 1],
         ];
         break;
       case BLOCK_TYPE.Z:
         this.orientationsArray = [
-          [
-            BOARD_WIDTH,
-            BOARD_WIDTH + 1,
-            2 * BOARD_WIDTH + 1,
-            2 * BOARD_WIDTH + 2,
-          ],
+          [0, 1, BOARD_WIDTH + 1, BOARD_WIDTH + 2],
           [2, BOARD_WIDTH + 1, BOARD_WIDTH + 2, 2 * BOARD_WIDTH + 1],
-          [
-            BOARD_WIDTH,
-            BOARD_WIDTH + 1,
-            2 * BOARD_WIDTH + 1,
-            2 * BOARD_WIDTH + 2,
-          ],
+          [0, 1, BOARD_WIDTH + 1, BOARD_WIDTH + 2],
           [2, BOARD_WIDTH + 1, BOARD_WIDTH + 2, 2 * BOARD_WIDTH + 1],
         ];
         break;
@@ -143,22 +164,21 @@ class Block {
     }
   }
 
-  // set board's square position index for this block
+  // set the position for each square occupied by the block when the block moves
   setPosition(offset) {
     this.position += offset;
   }
 
-  // change orientation of the block
+  // change orientation of the block (rotate block)
   setOrientation() {
     this.orientation = this.orientation === 3 ? 0 : this.orientation + 1;
   }
 
-  // get board squares index that are occupied by the block
-  getCurrentSquares() {
-    const x = this.orientationsArray[this.orientation].map(
+  // get array with the board squares index that are occupied by the block in the current position
+  getCurrentBlockSquares() {
+    return this.orientationsArray[this.orientation].map(
       (indexPart) => this.position + indexPart
     );
-    return x;
   }
 }
 
