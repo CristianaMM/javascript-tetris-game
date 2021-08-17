@@ -33,15 +33,32 @@ class Board {
     //Add all squares in board to an array so each one have an index number
     this.squares = document.querySelectorAll(".board div");
 
+    //Create Listeners - keyboard
     this.createListeners();
   }
 
   drawBlock() {
+    //get squares that will be occupied by the block in the specific position
     const currentSquares = this.block.getCurrentBlockSquares();
-    currentSquares.forEach((squareIndex) =>
-      this.squares[squareIndex].classList.add("block")
+
+    // if any of the blocks of the new position are already occupied, block will stay in the previous position and a new block will be created.
+    const isBlocked = currentSquares.some((squareIndex) =>
+      this.squares[squareIndex].classList.contains("blocked")
     );
-    this.lastPositions = currentSquares;
+
+    if (isBlocked) {
+      this.lastPositions.forEach((squareIndex) =>
+        this.squares[squareIndex].classList.add("blocked")
+      );
+      this.block = null;
+    } else {
+      currentSquares.forEach((squareIndex) =>
+        this.squares[squareIndex].classList.add("block")
+      );
+
+      // keep track of previous position
+      this.lastPositions = currentSquares;
+    }
   }
 
   undrawBlock() {
@@ -51,13 +68,20 @@ class Board {
     );
   }
 
+  //generate random block type if there is no current block
   generateBlock() {
-    if (!this.block) this.block = new Block(BLOCK_TYPE.T);
+    const typeOfBlock = Math.round(Math.random() * 5);
+
+    if (!this.block)
+      this.block = new Block(Object.keys(BLOCK_TYPE)[typeOfBlock]);
   }
 
   // Event Listeners to handle key press (move and rotate block)
   createListeners() {
     document.addEventListener("keydown", (e) => {
+      if (!this.block) {
+        return;
+      }
       switch (e.code) {
         case "ArrowDown":
           this.undrawBlock();
@@ -67,17 +91,31 @@ class Board {
         case "ArrowUp":
           this.undrawBlock();
           this.block.setOrientation();
+
           this.drawBlock();
           break;
         case "ArrowRight":
-          this.undrawBlock();
-          this.block.setPosition(1);
-          this.drawBlock();
+          let isAtRightEdge = this.block
+            .getCurrentBlockSquares()
+            .some((squareIndex) => (squareIndex + 1) % BOARD_WIDTH === 0);
+
+          if (!isAtRightEdge) {
+            this.undrawBlock();
+            this.block.setPosition(1);
+            this.drawBlock();
+          }
+
           break;
         case "ArrowLeft":
-          this.undrawBlock();
-          this.block.setPosition(-1);
-          this.drawBlock();
+          let isAtLeftEdge = this.block
+            .getCurrentBlockSquares()
+            .some((squareIndex) => squareIndex % BOARD_WIDTH === 0);
+
+          if (!isAtLeftEdge) {
+            this.undrawBlock();
+            this.block.setPosition(-1);
+            this.drawBlock();
+          }
           break;
 
         default:
@@ -166,12 +204,20 @@ class Block {
 
   // set the position for each square occupied by the block when the block moves
   setPosition(offset) {
+    this.lastPosition = this.position;
     this.position += offset;
   }
 
   // change orientation of the block (rotate block)
   setOrientation() {
     this.orientation = this.orientation === 3 ? 0 : this.orientation + 1;
+    if (
+      this.orientationsArray[this.orientation].some(
+        (indexPart) => (this.position + indexPart) % BOARD_WIDTH === 0
+      )
+    ) {
+      this.position = this.lastPosition;
+    }
   }
 
   // get array with the board squares index that are occupied by the block in the current position
