@@ -14,6 +14,7 @@ const BOARD_WIDTH = 10;
 class Board {
   constructor() {
     this.board = document.querySelector(".board");
+    this.score = 0;
   }
 
   createBoard() {
@@ -24,14 +25,14 @@ class Board {
       this.board.appendChild(div);
     }
     // Add blocked row in the lower part of the board
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < BOARD_WIDTH; i++) {
       const div = document.createElement("div");
       div.classList.add("board__square", "blocked");
       this.board.appendChild(div);
     }
 
     //Add all squares in board to an array so each one have an index number
-    this.squares = document.querySelectorAll(".board div");
+    this.squares = Array.from(document.querySelectorAll(".board div")); // used Array.from because it did not accept the .splice() used in the getScore() function.
 
     //Create Listeners - keyboard
     this.createListeners();
@@ -85,7 +86,7 @@ class Board {
       switch (e.code) {
         case "ArrowDown":
           this.undrawBlock();
-          this.block.setPosition(10);
+          this.block.setPosition(BOARD_WIDTH);
           this.drawBlock();
           break;
         case "ArrowUp":
@@ -123,15 +124,63 @@ class Board {
       }
     });
   }
+
+  getScore() {
+    const displayScore = document.querySelector(".score");
+
+    for (let i = 0; i < 199; i += BOARD_WIDTH) {
+      // each row of the board
+      const row = [
+        i,
+        i + 1,
+        i + 2,
+        i + 3,
+        i + 4,
+        i + 5,
+        i + 6,
+        i + 7,
+        i + 8,
+        i + 9,
+      ];
+
+      // if every square of that row in occupied, add 10 points to score, remove that row and add a new empty row on top of the board
+      if (
+        row.every((square) =>
+          this.squares[square].classList.contains("blocked")
+        )
+      ) {
+        this.score += 10;
+        displayScore.innerHTML = this.score;
+        row.forEach((square) =>
+          this.squares[square].classList.remove("blocked")
+        );
+
+        const squaresToRemove = this.squares.splice(i, BOARD_WIDTH);
+        this.squares = squaresToRemove.concat(this.squares);
+        this.squares.forEach((square) => this.board.appendChild(square));
+      }
+    }
+  }
+
   //initiate timer, every second block will go down 1 row
   init() {
     // don't forget to clear timer in the end of the game
-    this.timer = setInterval(() => {
-      this.generateBlock();
-      this.undrawBlock();
-      this.drawBlock();
-      this.block.setPosition(10);
-    }, 1000);
+    let startbtn = document.querySelector(".startButton");
+
+    startbtn.addEventListener("click", () => {
+      if (this.timer) {
+        clearInterval(this.timer);
+        this.timer = null;
+      } else {
+        this.timer = setInterval(() => {
+          this.generateBlock();
+          this.undrawBlock();
+          this.drawBlock();
+          this.block.setPosition(BOARD_WIDTH);
+          this.getScore();
+        }, 750);
+      }
+    });
   }
 }
 
@@ -231,3 +280,11 @@ class Block {
 const board = new Board();
 board.createBoard();
 board.init();
+
+//TO DO:
+// block I when does not fit when rotates close to margin
+// when rotate blocks close to margin sometimes it goes to the other side
+// stop blocking blocks when they move to a "blocked" square on the side, only block them when is vertical collision
+//sometimes blocks don't block in the end of the board but in the previous position
+
+// css
