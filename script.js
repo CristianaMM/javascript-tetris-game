@@ -14,7 +14,11 @@ const BOARD_WIDTH = 10;
 class Board {
   constructor() {
     this.board = document.querySelector(".board");
-    this.score = 0;
+    this.squares = [];
+    this.createBoard();
+    this.resetGame();
+    //Create Listeners - keyboard
+    this.createListeners();
   }
 
   createBoard() {
@@ -27,72 +31,47 @@ class Board {
     // Add blocked row in the lower part of the board
     for (let i = 0; i < BOARD_WIDTH; i++) {
       const div = document.createElement("div");
-      div.classList.add("board__square", "blocked");
+      div.classList.add("board__square", "blocked", "board__footer");
       this.board.appendChild(div);
     }
 
     //Add all squares in board to an array so each one have an index number
     this.squares = Array.from(document.querySelectorAll(".board div")); // used Array.from because it did not accept the .splice() used in the getScore() function.
-
-    //Create Listeners - keyboard
-    this.createListeners();
   }
 
-  drawBlock() {
-    //get squares that will be occupied by the block in the specific position
-    const currentSquares = this.block.getCurrentBlockSquares();
+  resetGame() {
+    this.block = null;
+    this.userInput = false;
+    this.prevPositionInBoard = null;
+    this.score = 0;
 
-    // if any of the blocks of the new position are already occupied, block will stay in the previous position and a new block will be created.
-    const isBlocked = currentSquares.some((squareIndex) =>
-      this.squares[squareIndex].classList.contains("blocked")
-    );
-
-    if (isBlocked) {
-      this.lastPositions.forEach((squareIndex) =>
-        this.squares[squareIndex].classList.add("blocked")
-      );
-      this.block = null;
-    } else {
-      currentSquares.forEach((squareIndex) =>
-        this.squares[squareIndex].classList.add("block")
-      );
-
-      // keep track of previous position
-      this.lastPositions = currentSquares;
-    }
-  }
-
-  undrawBlock() {
-    const lastPositionSquares = this.lastPositions || [];
-    lastPositionSquares.forEach((square) =>
-      this.squares[square].classList.remove("block")
-    );
-  }
-
-  //generate random block type if there is no current block
-  generateBlock() {
-    const typeOfBlock = Math.round(Math.random() * 5);
-
-    if (!this.block)
-      this.block = new Block(Object.keys(BLOCK_TYPE)[typeOfBlock]);
+    this.squares.forEach((square) => {
+      if (!square.classList.contains("board__footer")) {
+        square.classList.remove("blocked");
+      }
+    });
   }
 
   // Event Listeners to handle key press (move and rotate block)
   createListeners() {
+    document.addEventListener("keyup", (e) => {
+      if (e.code === "ArrowDown") {
+        this.userInput = false;
+      }
+    });
     document.addEventListener("keydown", (e) => {
       if (!this.block) {
         return;
       }
+
       switch (e.code) {
         case "ArrowDown":
-          this.undrawBlock();
-          this.block.setPosition(BOARD_WIDTH);
+          this.block.setCurrentPosition(BOARD_WIDTH, this.squares);
           this.drawBlock();
+          this.userInput = true;
           break;
         case "ArrowUp":
-          this.undrawBlock();
           this.block.setOrientation();
-
           this.drawBlock();
           break;
         case "ArrowRight":
@@ -101,8 +80,7 @@ class Board {
             .some((squareIndex) => (squareIndex + 1) % BOARD_WIDTH === 0);
 
           if (!isAtRightEdge) {
-            this.undrawBlock();
-            this.block.setPosition(1);
+            this.block.setCurrentPosition(1, this.squares);
             this.drawBlock();
           }
 
@@ -113,8 +91,7 @@ class Board {
             .some((squareIndex) => squareIndex % BOARD_WIDTH === 0);
 
           if (!isAtLeftEdge) {
-            this.undrawBlock();
-            this.block.setPosition(-1);
+            this.block.setCurrentPosition(-1, this.squares);
             this.drawBlock();
           }
           break;
@@ -123,6 +100,85 @@ class Board {
           break;
       }
     });
+  }
+
+  startGame() {
+    updatePlayPauseLabel();
+    //initiate timer, every second block will go down 1 row
+    this.timer = setInterval(() => {
+      this.generateBlock();
+      this.drawBlock();
+      if (!this.userInput) {
+        this.block.setCurrentPosition(BOARD_WIDTH, this.squares);
+      }
+      this.getScore();
+    }, 750);
+  }
+
+  stopGame(isGameOver) {
+    clearInterval(this.timer);
+    this.timer = null;
+
+    updatePlayPauseLabel();
+
+    if (isGameOver) {
+      alert("game over");
+      this.resetGame();
+    }
+  }
+
+  togglePlayPause() {
+    if (this.timer) {
+      this.stopGame();
+    } else {
+      this.startGame();
+    }
+  }
+
+  drawBlock() {
+    // undraw block from its let's position
+    const prevBlockPosition = this.prevPositionInBoard || [];
+    prevBlockPosition.forEach((square) =>
+      this.squares[square].classList.remove("block")
+    );
+
+    //get squares that will be occupied by the block in the specific position
+    const currentSquares = this.block.getCurrentBlockSquares();
+
+    // console.log("currentSquares", currentSquares);
+    // console.log("lastPositions", this.lastPositions);
+    //console.log("position", this.block.position);
+
+    // if any of the blocks of the new position are already occupied, block will stay in the previous position and a new block will be created.
+    const isBlocked = currentSquares.some((squareIndex) =>
+      this.squares[squareIndex].classList.contains("blocked")
+    );
+    const hasFirstRowBlockBlocked = currentSquares.some((x) => x < 10);
+
+    if (isBlocked && hasFirstRowBlockBlocked) {
+      this.stopGame(true);
+    } else if (isBlocked) {
+      this.prevPositionInBoard.forEach((squareIndex) =>
+        this.squares[squareIndex].classList.add("blocked")
+      );
+      this.block = null;
+    } else {
+      currentSquares.forEach((squareIndex) =>
+        this.squares[squareIndex].classList.add("block")
+      );
+
+      // keep track of previous position
+      this.prevPositionInBoard = currentSquares;
+    }
+  }
+
+  //generate random block type if there is no current block
+  generateBlock() {
+    if (!this.block) {
+      const typeOfBlock = Math.round(Math.random() * 5);
+      this.block = new Block(Object.keys(BLOCK_TYPE)[typeOfBlock]);
+      //this.block = new Block(BLOCK_TYPE.Z);
+    }
   }
 
   getScore() {
@@ -143,7 +199,7 @@ class Board {
         i + 9,
       ];
 
-      // if every square of that row in occupied, add 10 points to score, remove that row and add a new empty row on top of the board
+      // if every square of that row in occupied, add 10 points to score, remove that row and add an empty row on top of the board
       if (
         row.every((square) =>
           this.squares[square].classList.contains("blocked")
@@ -161,38 +217,17 @@ class Board {
       }
     }
   }
-
-  //initiate timer, every second block will go down 1 row
-  init() {
-    // don't forget to clear timer in the end of the game
-    let startbtn = document.querySelector(".startButton");
-
-    startbtn.addEventListener("click", () => {
-      if (this.timer) {
-        clearInterval(this.timer);
-        this.timer = null;
-      } else {
-        this.timer = setInterval(() => {
-          this.generateBlock();
-          this.undrawBlock();
-          this.drawBlock();
-          this.block.setPosition(BOARD_WIDTH);
-          this.getScore();
-        }, 750);
-      }
-    });
-  }
 }
 
 class Block {
-  //initialize a new block with a given blockType
-  constructor(blockType) {
-    this.blockType = blockType;
-    this.position = 4; // initial position when block enters the board (middle top of the board)
+  //initialize a new block with a given type
+  constructor(type) {
+    this.type = type;
+    this.currentPosition = 4; // initial position when block enters the board (middle top of the board)
+    this.orientationsArray = []; // all possible orientatios for the type of block
     this.orientation = 0; // first position of this.orientationsArray. When block enters the board will always be in the first orientation (index=0)
 
-    //define this.orientationsArray (all possible orientatios for the type of block)
-    switch (this.blockType) {
+    switch (this.type) {
       case BLOCK_TYPE.L:
         this.orientationsArray = [
           [1, 2, BOARD_WIDTH + 1, 2 * BOARD_WIDTH + 1],
@@ -246,45 +281,69 @@ class Block {
           [BOARD_WIDTH, BOARD_WIDTH + 1, BOARD_WIDTH + 2, BOARD_WIDTH + 3],
         ];
         break;
-      default:
-        throw "invalid blockType";
     }
   }
 
   // set the position for each square occupied by the block when the block moves
-  setPosition(offset) {
-    this.lastPosition = this.position;
-    this.position += offset;
+  setCurrentPosition(offset, boardSquares) {
+    const currentSquares = this.getCurrentBlockSquares();
+    const willBeBlocked = currentSquares.some((squareIndex) =>
+      boardSquares[squareIndex + offset].classList.contains("blocked")
+    );
+    const isMovingDown = offset === BOARD_WIDTH;
+
+    if (!(willBeBlocked && !isMovingDown)) {
+      this.lastPosition = this.currentPosition;
+      this.currentPosition += offset;
+    }
   }
 
   // change orientation of the block (rotate block)
   setOrientation() {
+    // block Type I is bigger than the rest of blocks
+    if (
+      this.type === "I" &&
+      (this.currentPosition + 2) % BOARD_WIDTH === 0 &&
+      (this.orientation === 0 || this.orientation === 2)
+    ) {
+      this.currentPosition -= 2;
+    }
+
     this.orientation = this.orientation === 3 ? 0 : this.orientation + 1;
+
     if (
       this.orientationsArray[this.orientation].some(
-        (indexPart) => (this.position + indexPart) % BOARD_WIDTH === 0
+        (indexPart) => (this.currentPosition + indexPart) % BOARD_WIDTH === 0
       )
     ) {
-      this.position = this.lastPosition;
+      this.currentPosition = this.lastPosition;
     }
   }
 
   // get array with the board squares index that are occupied by the block in the current position
   getCurrentBlockSquares() {
     return this.orientationsArray[this.orientation].map(
-      (indexPart) => this.position + indexPart
+      (indexPart) => this.currentPosition + indexPart
     );
   }
 }
 
+const startbtn = document.querySelector(".startButton");
 const board = new Board();
-board.createBoard();
-board.init();
+
+startbtn.addEventListener("click", () => {
+  board.togglePlayPause();
+});
+
+function updatePlayPauseLabel() {
+  startbtn.innerHTML = startbtn.innerHTML === "Pause" ? "Start" : "Pause";
+}
 
 //TO DO:
-// block I when does not fit when rotates close to margin
-// when rotate blocks close to margin sometimes it goes to the other side
+// when rotate blocks close to margin sometimes it goes to the other side (block.setOrientation() )
 // stop blocking blocks when they move to a "blocked" square on the side, only block them when is vertical collision
-//sometimes blocks don't block in the end of the board but in the previous position
+// sometimes blocks don't block in the end of the board but in the previous position
+// update start button label to play/pause
+// don't forget to clear timer in the end of the game
 
 // css
