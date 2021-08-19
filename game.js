@@ -143,6 +143,8 @@ class Board {
     updatePlayPauseLabel();
 
     if (isGameOver) {
+      const displayScore = document.querySelector(".score");
+
       updateFinalScoreLabel(this.score);
       gameOverModal.style.display = "flex";
       displayScore.innerHTML = 0;
@@ -174,10 +176,7 @@ class Board {
       this.stopGame(true);
     } else if (isBlocked) {
       this.prevPositionOnBoard.forEach((squareIndex) =>
-        this.squares[squareIndex].classList.add(
-          "blocked",
-          `block_${this.block.type.toLowerCase()}`
-        )
+        this.squares[squareIndex].classList.add("blocked")
       );
       this.block = null;
     } else {
