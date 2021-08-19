@@ -6,11 +6,39 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Let's Play Tetris</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="./styles/styles.css">
 </head>
 
 <body>
 
+    <section class="instructionsModal">
+        <div class="instructionsModal__square">
+            <h1>Instructions</h1>
+            <h2>Controls</h2>
+            <p>Keyboard</p>
+            <h2>Game play</h2>
+            <p>For the very few people who don't know how to play Tetris: blocks of different shapes drop from the
+                top of the screen into a box. </p>
+            <p>As the blocks fall they can be rotated or moved horizontally so that every
+                space in the box is filled. When a horizontal line is completed, that line is "destroyed" giving you
+                more 10 points and moving the rest of the placed pieces down by one square.
+            </p>
+            <p>If a line remains
+                incomplete,
+                another line must be finished above it. The more lines that stand incomplete, the higher the blocks
+                above them stack, reducing the space in which falling shapes can be manipulated. Eventually the
+                blocks
+                reach the top of the screen and the game ends. </p>
+            <h2>Keys</h2>
+            <ul>
+                <li>arrow left - move left</li>
+                <li>arrow right - move right</li>
+                <li>arrow down - move down</li>
+                <li>arrow up - rotate</li>
+            </ul>
+            <button class="closeButton">Close</button>
+        </div>
+    </section>
     <header class="header">
 
         <h1 class="header__title1">Let's Play</h1>
@@ -29,10 +57,11 @@
         <a href="./gamePage.html?mode=hard" class="modeButtons__hard button">
             <div>Hard</div>
         </a>
+        <a class="instructions button">
+            <div>Instructions</div>
+        </a>
 
-        <div class=" button">
-            <div class="scores">High Scores</div>
-        </div>
+
     </main>
 
     <script src="./script.js"></script>

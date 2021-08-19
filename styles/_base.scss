@@ -1,0 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+$background-blue: #b4d3e4;
+$background-white: #fbfbfb;
+$color-black: #000000;
+$block-color-blue: #cfe2f3;
+$block-color-yellow: #fff2cc;
+$block-color-purple: #b4a7d6;
+$block-color-pink: #f4cccc;
+$block-color-green: #d9efd1;
+$block-color-orange: #f6b26b;
+$block-color-wine: #a64d79;
+$color-grey: #c4c4c4;
+
+$font-family: "Roboto", sans-serif;
+
+/*media queries (sizes used by bootstrap) */
+$small: 576px;
+$medium: 768px;
+$large: 992px;
+$extra-large: 1200px;
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: $font-family;
+  text-decoration: none;
+}
+
+body {
+  overflow-x: hidden;
+}

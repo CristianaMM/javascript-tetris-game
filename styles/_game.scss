@@ -1,0 +1,155 @@
+@import "./base";
+
+.container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: $background-blue;
+}
+
+.info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &__title {
+    color: $background-white;
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+  &__score {
+    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  &__startButton {
+    width: 100px;
+    text-align: center;
+    background-color: $background-white;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 2px 2px 4px 0 rgb(255 255 255 / 59%) inset,
+      -3px -3px 3px 0 rgb(0 0 0 / 25%) inset;
+    margin-bottom: 10px;
+  }
+  &__audioControl {
+    color: $background-white;
+    font-size: 30px;
+    position: fixed;
+    top: 10px;
+    right: 12px;
+  }
+
+  @media screen and (min-width: $small) {
+    &__startButton {
+      padding: 10px 30px;
+      font-size: 20px;
+    }
+  }
+  @media screen and (min-width: $medium) {
+    &__title {
+      font-size: 50px;
+      margin-bottom: 20px;
+    }
+    &__score {
+      margin-bottom: 20px;
+    }
+    &__startButton {
+      margin-bottom: 20px;
+      width: 150px;
+    }
+  }
+}
+
+.board {
+  height: 420px;
+  width: 200px;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 5px;
+  box-sizing: content-box;
+  border: 1px solid rgb(255 255 255 / 40%);
+  box-shadow: 3px 3px 27px 0 rgb(0 0 0 / 30%);
+  &__square {
+    height: 20px;
+    width: 20px;
+  }
+
+  @media screen and (min-width: $small) {
+    height: 630px;
+    width: 300px;
+    margin-top: 20px;
+    &__square {
+      height: 30px;
+      width: 30px;
+    }
+  }
+
+  .block {
+    background-color: lightsalmon;
+    box-shadow: 2px 2px 4px 0 rgb(255 255 255 / 59%) inset,
+      -3px -3px 3px 0 rgb(0 0 0 / 25%) inset;
+  }
+  .blocked {
+    background-color: darkgray;
+    box-shadow: 2px 2px 4px 0 rgb(255 255 255 / 59%) inset,
+      -3px -3px 3px 0 rgb(0 0 0 / 25%) inset;
+  }
+}
+
+.gameOverModal {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
+  background-color: rgb(0 0 0 / 50%);
+  &__square {
+    background-color: $background-white;
+    height: auto;
+    width: 90vw;
+    max-width: 500px;
+    padding: 20px;
+
+    h1,
+    p {
+      text-align: center;
+    }
+  }
+  &__buttons {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: column-reverse;
+    @media screen and (min-width: $small) {
+      flex-direction: row;
+    }
+  }
+
+  .button {
+    background-color: $background-white;
+    margin-top: 25px;
+    width: 150px;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    color: $color-black;
+    font-size: 20px;
+    box-shadow: 2px 2px 4px 0 rgb(255 255 255 / 59%) inset,
+      -3px -3px 3px 0 rgb(0 0 0 / 25%) inset;
+    cursor: pointer;
+    &:hover {
+      box-shadow: 2px 2px 4px 0 rgb(0 0 0 / 59%) inset,
+        -3px -3px 3px 0 rgb(255 255 255 / 25%) inset;
+    }
+  }
+}
