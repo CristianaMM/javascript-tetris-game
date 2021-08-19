@@ -15,10 +15,13 @@ class Board {
   constructor() {
     this.board = document.querySelector(".board");
     this.squares = [];
+    this.block = null;
+    this.userInput = false;
+    this.prevPositionOnBoard = null;
+    this.score = 0;
     this.createBoard();
     this.resetGame();
-    //Create Listeners - keyboard
-    this.createListeners();
+    this.createListeners(); // keyboard
   }
 
   createBoard() {
@@ -42,7 +45,7 @@ class Board {
   resetGame() {
     this.block = null;
     this.userInput = false;
-    this.prevPositionInBoard = null;
+    this.prevPositionOnBoard = null;
     this.score = 0;
 
     this.squares.forEach((square) => {
@@ -71,7 +74,7 @@ class Board {
           this.userInput = true;
           break;
         case "ArrowUp":
-          this.block.setOrientation();
+          this.block.setOrientation(this.squares);
           this.drawBlock();
           break;
         case "ArrowRight":
@@ -102,6 +105,14 @@ class Board {
     });
   }
 
+  togglePlayPause() {
+    if (this.timer) {
+      this.stopGame();
+    } else {
+      this.startGame();
+    }
+  }
+
   startGame() {
     updatePlayPauseLabel();
     //initiate timer, every second block will go down 1 row
@@ -127,38 +138,26 @@ class Board {
     }
   }
 
-  togglePlayPause() {
-    if (this.timer) {
-      this.stopGame();
-    } else {
-      this.startGame();
-    }
-  }
-
   drawBlock() {
-    // undraw block from its let's position
-    const prevBlockPosition = this.prevPositionInBoard || [];
+    // undraw block from its last position
+    const prevBlockPosition = this.prevPositionOnBoard || [];
     prevBlockPosition.forEach((square) =>
       this.squares[square].classList.remove("block")
     );
 
-    //get squares that will be occupied by the block in the specific position
+    //get squares that will be occupied by the block on the board
     const currentSquares = this.block.getCurrentBlockSquares();
-
-    // console.log("currentSquares", currentSquares);
-    // console.log("lastPositions", this.lastPositions);
-    //console.log("position", this.block.position);
 
     // if any of the blocks of the new position are already occupied, block will stay in the previous position and a new block will be created.
     const isBlocked = currentSquares.some((squareIndex) =>
       this.squares[squareIndex].classList.contains("blocked")
     );
-    const hasFirstRowBlockBlocked = currentSquares.some((x) => x < 10);
+    const isInFirstRow = currentSquares.some((x) => x < 10);
 
-    if (isBlocked && hasFirstRowBlockBlocked) {
+    if (isBlocked && isInFirstRow) {
       this.stopGame(true);
     } else if (isBlocked) {
-      this.prevPositionInBoard.forEach((squareIndex) =>
+      this.prevPositionOnBoard.forEach((squareIndex) =>
         this.squares[squareIndex].classList.add("blocked")
       );
       this.block = null;
@@ -168,16 +167,15 @@ class Board {
       );
 
       // keep track of previous position
-      this.prevPositionInBoard = currentSquares;
+      this.prevPositionOnBoard = currentSquares;
     }
   }
 
   //generate random block type if there is no current block
   generateBlock() {
     if (!this.block) {
-      const typeOfBlock = Math.round(Math.random() * 5);
+      const typeOfBlock = Math.round(Math.random() * 6);
       this.block = new Block(Object.keys(BLOCK_TYPE)[typeOfBlock]);
-      //this.block = new Block(BLOCK_TYPE.Z);
     }
   }
 
@@ -212,7 +210,9 @@ class Board {
         );
 
         const squaresToRemove = this.squares.splice(i, BOARD_WIDTH);
+
         this.squares = squaresToRemove.concat(this.squares);
+
         this.squares.forEach((square) => this.board.appendChild(square));
       }
     }
@@ -224,11 +224,26 @@ class Block {
   constructor(type) {
     this.type = type;
     this.currentPosition = 4; // initial position when block enters the board (middle top of the board)
+
     this.orientationsArray = []; // all possible orientatios for the type of block
     this.orientation = 0; // first position of this.orientationsArray. When block enters the board will always be in the first orientation (index=0)
+    this.currentRow = 0; // row on the board
 
     switch (this.type) {
       case BLOCK_TYPE.L:
+        this.orientationsArray = [
+          [0, 1, BOARD_WIDTH + 1, 2 * BOARD_WIDTH + 1],
+          [
+            BOARD_WIDTH + 2,
+            2 * BOARD_WIDTH,
+            2 * BOARD_WIDTH + 1,
+            2 * BOARD_WIDTH + 2,
+          ],
+          [1, BOARD_WIDTH + 1, 2 * BOARD_WIDTH + 1, 2 * BOARD_WIDTH + 2],
+          [BOARD_WIDTH, BOARD_WIDTH + 1, BOARD_WIDTH + 2, 2 * BOARD_WIDTH],
+        ];
+        break;
+      case BLOCK_TYPE.J:
         this.orientationsArray = [
           [1, 2, BOARD_WIDTH + 1, 2 * BOARD_WIDTH + 1],
           [BOARD_WIDTH, BOARD_WIDTH + 1, BOARD_WIDTH + 2, 2 * BOARD_WIDTH + 2],
@@ -293,30 +308,46 @@ class Block {
     const isMovingDown = offset === BOARD_WIDTH;
 
     if (!(willBeBlocked && !isMovingDown)) {
-      this.lastPosition = this.currentPosition;
       this.currentPosition += offset;
+      this.currentRow =
+        offset === BOARD_WIDTH ? this.currentRow + 1 : this.currentRow;
     }
   }
 
   // change orientation of the block (rotate block)
-  setOrientation() {
-    // block Type I is bigger than the rest of blocks
-    if (
-      this.type === "I" &&
-      (this.currentPosition + 2) % BOARD_WIDTH === 0 &&
-      (this.orientation === 0 || this.orientation === 2)
-    ) {
-      this.currentPosition -= 2;
-    }
+  setOrientation(boardSquares) {
+    const newOrientation = this.orientation === 3 ? 0 : this.orientation + 1;
 
-    this.orientation = this.orientation === 3 ? 0 : this.orientation + 1;
+    const positionsAfterRotation = this.orientationsArray[newOrientation].map(
+      (i) => this.currentPosition + i
+    );
+    const willBeBlocked = positionsAfterRotation.some((i) =>
+      boardSquares[i].classList.contains("blocked")
+    );
 
-    if (
-      this.orientationsArray[this.orientation].some(
-        (indexPart) => (this.currentPosition + indexPart) % BOARD_WIDTH === 0
-      )
-    ) {
-      this.currentPosition = this.lastPosition;
+    // don't allow to rotate if new position will be on top of blocked squares
+    this.orientation = willBeBlocked ? this.orientation : newOrientation;
+
+    //handle with rotation close to edges
+    const isOnLeft =
+      this.currentPosition - this.currentRow * 10 > 4 &&
+      (this.type === "I" || this.currentPosition - this.currentRow * 10 < 9)
+        ? false
+        : true; // included collumn 9 on left because of the way the blocks are defined.
+
+    const isOnFirstCollumn = this.orientationsArray[this.orientation].some(
+      (indexPart) => (this.currentPosition + indexPart) % BOARD_WIDTH === 0
+    );
+    const isOnLastCollumn = this.orientationsArray[this.orientation].some(
+      (indexPart) => (this.currentPosition + indexPart + 1) % BOARD_WIDTH === 0
+    );
+
+    if (isOnLeft && isOnLastCollumn) {
+      this.currentPosition += 1;
+    } else if (!isOnLeft && isOnFirstCollumn && this.type === "I") {
+      this.currentPosition -= 2; // block type "I" is bigger than the rest
+    } else if (!isOnLeft && isOnFirstCollumn) {
+      this.currentPosition -= 1;
     }
   }
 
@@ -340,10 +371,7 @@ function updatePlayPauseLabel() {
 }
 
 //TO DO:
-// when rotate blocks close to margin sometimes it goes to the other side (block.setOrientation() )
-// stop blocking blocks when they move to a "blocked" square on the side, only block them when is vertical collision
+
 // sometimes blocks don't block in the end of the board but in the previous position
-// update start button label to play/pause
-// don't forget to clear timer in the end of the game
 
 // css
