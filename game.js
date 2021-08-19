@@ -6,6 +6,7 @@ const BLOCK_TYPE = {
   S: "S",
   Z: "Z",
   I: "I",
+  J: "J",
 };
 
 // amount of squares in each row of the board
@@ -152,8 +153,12 @@ class Board {
   drawBlock() {
     // undraw block from its last position
     const prevBlockPosition = this.prevPositionOnBoard || [];
+
     prevBlockPosition.forEach((square) =>
-      this.squares[square].classList.remove("block")
+      this.squares[square].classList.remove(
+        "block",
+        `block_${this.block.type.toLowerCase()}`
+      )
     );
 
     //get squares that will be occupied by the block on the board
@@ -169,12 +174,18 @@ class Board {
       this.stopGame(true);
     } else if (isBlocked) {
       this.prevPositionOnBoard.forEach((squareIndex) =>
-        this.squares[squareIndex].classList.add("blocked")
+        this.squares[squareIndex].classList.add(
+          "blocked",
+          `block_${this.block.type.toLowerCase()}`
+        )
       );
       this.block = null;
     } else {
       currentSquares.forEach((squareIndex) =>
-        this.squares[squareIndex].classList.add("block")
+        this.squares[squareIndex].classList.add(
+          "block",
+          `block_${this.block.type.toLowerCase()}`
+        )
       );
 
       // keep track of previous position

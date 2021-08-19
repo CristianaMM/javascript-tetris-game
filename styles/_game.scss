@@ -93,7 +93,6 @@
   }
 
   .block {
-    background-color: lightsalmon;
     box-shadow: 2px 2px 4px 0 rgb(255 255 255 / 59%) inset,
       -3px -3px 3px 0 rgb(0 0 0 / 25%) inset;
   }
@@ -101,6 +100,27 @@
     background-color: darkgray;
     box-shadow: 2px 2px 4px 0 rgb(255 255 255 / 59%) inset,
       -3px -3px 3px 0 rgb(0 0 0 / 25%) inset;
+  }
+  .block_l {
+    background-color: $block-color-blue;
+  }
+  .block_j {
+    background-color: $block-color-purple;
+  }
+  .block_t {
+    background-color: $block-color-pink;
+  }
+  .block_o {
+    background-color: $block-color-green;
+  }
+  .block_s {
+    background-color: $block-color-orange;
+  }
+  .block_z {
+    background-color: $block-color-wine;
+  }
+  .block_i {
+    background-color: $block-color-yellow;
   }
 }
 

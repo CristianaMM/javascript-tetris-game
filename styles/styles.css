@@ -276,12 +276,32 @@ body {
   }
 }
 .board .block {
-  background-color: lightsalmon;
   box-shadow: 2px 2px 4px 0 rgba(255, 255, 255, 0.59) inset, -3px -3px 3px 0 rgba(0, 0, 0, 0.25) inset;
 }
 .board .blocked {
   background-color: darkgray;
   box-shadow: 2px 2px 4px 0 rgba(255, 255, 255, 0.59) inset, -3px -3px 3px 0 rgba(0, 0, 0, 0.25) inset;
+}
+.board .block_l {
+  background-color: #cfe2f3;
+}
+.board .block_j {
+  background-color: #b4a7d6;
+}
+.board .block_t {
+  background-color: #f4cccc;
+}
+.board .block_o {
+  background-color: #d9efd1;
+}
+.board .block_s {
+  background-color: #f6b26b;
+}
+.board .block_z {
+  background-color: #a64d79;
+}
+.board .block_i {
+  background-color: #fff2cc;
 }
 
 .gameOverModal {
