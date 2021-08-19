@@ -5,24 +5,35 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tetris</title>
+    <title>Let's Play Tetris</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-    <h2>Tetris</h2>
-    <h5>SCORE: <span class="score">0</span></h5>
+    <header class="header">
 
-    <button class="startButton">Start</button>
-    <div class="container">
-        <div class="board">
+        <h1 class="header__title1">Let's Play</h1>
+        <h1 class="header__title2">Tetris</h1>
+        <div class="header__img"></div>
 
+
+    </header>
+    <main class="modeButtons">
+        <a href="./gamePage.html?mode=easy" class="modeButtons__easy button">
+            <div>Easy</div>
+        </a>
+        <a href="./gamePage.html?mode=medium" class="modeButtons__medium button">
+            <div>Medium</div>
+        </a>
+        <a href="./gamePage.html?mode=hard" class="modeButtons__hard button">
+            <div>Hard</div>
+        </a>
+
+        <div class=" button">
+            <div class="scores">High Scores</div>
         </div>
-        <div class="next-piece-board">
-
-        </div>
-    </div>
+    </main>
 
     <script src="./script.js"></script>
 </body>

@@ -16,12 +16,30 @@ class Board {
     this.board = document.querySelector(".board");
     this.squares = [];
     this.block = null;
-    this.userInput = false;
     this.prevPositionOnBoard = null;
     this.score = 0;
+    this.mode = 1000;
     this.createBoard();
     this.resetGame();
     this.createListeners(); // keyboard
+
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlSearchParams.entries());
+    const mode = params.mode || "easy";
+
+    switch (mode) {
+      case "easy":
+        this.mode = 750;
+        break;
+
+      case "medium":
+        this.mode = 250;
+        break;
+
+      case "hard":
+        this.mode = 100;
+        break;
+    }
   }
 
   createBoard() {
@@ -44,7 +62,6 @@ class Board {
 
   resetGame() {
     this.block = null;
-    this.userInput = false;
     this.prevPositionOnBoard = null;
     this.score = 0;
 
@@ -57,11 +74,6 @@ class Board {
 
   // Event Listeners to handle key press (move and rotate block)
   createListeners() {
-    document.addEventListener("keyup", (e) => {
-      if (e.code === "ArrowDown") {
-        this.userInput = false;
-      }
-    });
     document.addEventListener("keydown", (e) => {
       if (!this.block) {
         return;
@@ -71,7 +83,6 @@ class Board {
         case "ArrowDown":
           this.block.setCurrentPosition(BOARD_WIDTH, this.squares);
           this.drawBlock();
-          this.userInput = true;
           break;
         case "ArrowUp":
           this.block.setOrientation(this.squares);
@@ -119,11 +130,9 @@ class Board {
     this.timer = setInterval(() => {
       this.generateBlock();
       this.drawBlock();
-      if (!this.userInput) {
-        this.block.setCurrentPosition(BOARD_WIDTH, this.squares);
-      }
+      this.block.setCurrentPosition(BOARD_WIDTH, this.squares);
       this.getScore();
-    }, 750);
+    }, this.mode);
   }
 
   stopGame(isGameOver) {
@@ -359,19 +368,37 @@ class Block {
   }
 }
 
-const startbtn = document.querySelector(".startButton");
-const board = new Board();
-
-startbtn.addEventListener("click", () => {
-  board.togglePlayPause();
-});
-
-function updatePlayPauseLabel() {
-  startbtn.innerHTML = startbtn.innerHTML === "Pause" ? "Start" : "Pause";
-}
-
 //TO DO:
 
 // sometimes blocks don't block in the end of the board but in the previous position
 
 // css
+
+const startbtn = document.querySelector(".info__startButton");
+
+const audio = document.querySelector("audio");
+
+const audioControl = document.querySelector(".info__audioControl");
+
+if (audioControl) {
+  audioControl.addEventListener("click", () => {
+    audio.muted = !audio.muted;
+  });
+}
+
+if (startbtn) {
+  const board = new Board();
+
+  startbtn.addEventListener("click", () => {
+    board.togglePlayPause();
+    if (audio.paused) {
+      audio.play();
+    } else {
+      audio.pause();
+    }
+  });
+}
+
+function updatePlayPauseLabel() {
+  startbtn.innerHTML = startbtn.innerHTML === "Pause" ? "Start" : "Pause";
+}
