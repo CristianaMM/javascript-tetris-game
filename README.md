@@ -5,6 +5,7 @@ Logo animation using [GreenSock GSAP](https://greensock.com/gsap/)
 
 - [Demo](https://cristianamm.github.io/javascript-tetris-game/) 
 - [Figma](https://www.figma.com/file/J0TzEnwLWOhwbip6Dwrnyk/Tetris?node-id=0%3A1)
+- Blocks and board [layout](https://docs.google.com/spreadsheets/d/1NmNasGEGATGHBE4LH_nZ8SJ_KBi4s2siDAxmuY6JQJ4/edit?usp=sharing)
 
 ## Instructions
 
