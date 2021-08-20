@@ -1,5 +1,8 @@
 @import "./base";
 
+#gamePage {
+  overflow-y: hidden;
+}
 .container {
   height: 100vh;
   width: 100vw;
@@ -20,7 +23,7 @@
   &__title {
     color: $background-white;
     font-size: 40px;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     font-family: $font-family-title;
   }
   &__score {
@@ -51,20 +54,20 @@
 
   @media screen and (min-width: $small) {
     &__startButton {
-      padding: 10px 30px;
+      padding: 5px 10px;
       font-size: 20px;
     }
   }
   @media screen and (min-width: $medium) {
     &__title {
       font-size: 50px;
-      margin-bottom: 20px;
+      //margin-bottom: 20px;
     }
     &__score {
-      margin-bottom: 20px;
+      //margin-bottom: 20px;
     }
     &__startButton {
-      margin-bottom: 20px;
+      //margin-bottom: 20px;
       width: 150px;
     }
   }
@@ -85,12 +88,12 @@
   }
 
   @media screen and (min-width: $small) {
-    height: 630px;
-    width: 300px;
-    margin-top: 20px;
+    height: 525px;
+    width: 250px;
+    margin-top: 10px;
     &__square {
-      height: 30px;
-      width: 30px;
+      height: 25px;
+      width: 25px;
     }
   }
 

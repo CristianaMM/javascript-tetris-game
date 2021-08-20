@@ -301,6 +301,10 @@ body {
   overflow-x: hidden;
 }
 
+#gamePage {
+  overflow-y: hidden;
+}
+
 .container {
   height: 100vh;
   width: 100vw;
@@ -321,7 +325,7 @@ body {
 .info__title {
   color: #fbfbfb;
   font-size: 40px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   font-family: "Permanent Marker", cursive;
 }
 .info__score {
@@ -349,20 +353,15 @@ body {
 }
 @media screen and (min-width: 576px) {
   .info__startButton {
-    padding: 10px 30px;
+    padding: 5px 10px;
     font-size: 20px;
   }
 }
 @media screen and (min-width: 768px) {
   .info__title {
     font-size: 50px;
-    margin-bottom: 20px;
-  }
-  .info__score {
-    margin-bottom: 20px;
   }
   .info__startButton {
-    margin-bottom: 20px;
     width: 150px;
   }
 }
@@ -383,13 +382,13 @@ body {
 }
 @media screen and (min-width: 576px) {
   .board {
-    height: 630px;
-    width: 300px;
-    margin-top: 20px;
+    height: 525px;
+    width: 250px;
+    margin-top: 10px;
   }
   .board__square {
-    height: 30px;
-    width: 30px;
+    height: 25px;
+    width: 25px;
   }
 }
 .board .block {
