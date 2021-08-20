@@ -1,7 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap");
 /*media queries (sizes used by bootstrap) */
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap");
 * {
   box-sizing: border-box;
   padding: 0;
@@ -29,7 +34,7 @@ body {
 
 .header {
   background-color: #b4d3e4;
-  height: 15vh;
+  height: 145px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -40,6 +45,7 @@ body {
   text-align: left;
   font-size: 15px;
   color: #000000;
+  font-family: "Permanent Marker", cursive;
 }
 .header__title2 {
   width: 20%;
@@ -47,6 +53,7 @@ body {
   color: #fbfbfb;
   font-size: 30px;
   margin-bottom: 10px;
+  font-family: "Permanent Marker", cursive;
 }
 @media screen and (min-width: 576px) {
   .header__title1 {
@@ -97,8 +104,10 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  font-family: "Permanent Marker", cursive;
 }
 .modeButtons .button div {
+  font-family: "Permanent Marker", cursive;
   font-size: 20px;
 }
 @media screen and (min-width: 576px) {
@@ -186,6 +195,112 @@ body {
   overflow-x: hidden;
 }
 
+.header__logo {
+  position: absolute;
+  right: 170px;
+  top: 45px;
+  display: none;
+}
+@media screen and (min-width: 768px) {
+  .header__logo {
+    display: block;
+  }
+}
+.header__logo .block {
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-shadow: 2px 2px 4px 0 rgba(255, 255, 255, 0.59) inset, -3px -3px 3px 0 rgba(0, 0, 0, 0.25) inset;
+}
+.header__logo .block_l {
+  background-color: #cfe2f3;
+}
+.header__logo .block_l1 {
+  top: 0;
+}
+.header__logo .block_l2 {
+  top: 30px;
+}
+.header__logo .block_l3 {
+  top: 60px;
+}
+.header__logo .block_l4 {
+  top: 60px;
+  left: 30px;
+}
+.header__logo .block_z {
+  background-color: #a64d79;
+}
+.header__logo .block_z1 {
+  top: 30px;
+  left: 30px;
+}
+.header__logo .block_z2 {
+  top: 30px;
+  left: 60px;
+}
+.header__logo .block_z3 {
+  top: 60px;
+  left: 60px;
+}
+.header__logo .block_z4 {
+  top: 60px;
+  left: 90px;
+}
+.header__logo .block_o {
+  background-color: #d9efd1;
+}
+.header__logo .block_o1 {
+  top: -30px;
+  left: 30px;
+}
+.header__logo .block_o2 {
+  top: -30px;
+  left: 60px;
+}
+.header__logo .block_o3 {
+  top: 0px;
+  left: 30px;
+}
+.header__logo .block_o4 {
+  top: 0px;
+  left: 60px;
+}
+.header__logo .block_s {
+  background-color: #f6b26b;
+}
+.header__logo .block_s1 {
+  top: 0px;
+  left: 90px;
+}
+.header__logo .block_s2 {
+  top: 30px;
+  left: 90px;
+}
+.header__logo .block_s3 {
+  top: 30px;
+  left: 120px;
+}
+.header__logo .block_s4 {
+  top: 60px;
+  left: 120px;
+}
+
+/*media queries (sizes used by bootstrap) */
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  text-decoration: none;
+}
+
+body {
+  overflow-x: hidden;
+}
+
 .container {
   height: 100vh;
   width: 100vw;
@@ -207,6 +322,7 @@ body {
   color: #fbfbfb;
   font-size: 40px;
   margin-bottom: 10px;
+  font-family: "Permanent Marker", cursive;
 }
 .info__score {
   font-size: 15px;
@@ -222,6 +338,7 @@ body {
   cursor: pointer;
   box-shadow: 2px 2px 4px 0 rgba(255, 255, 255, 0.59) inset, -3px -3px 3px 0 rgba(0, 0, 0, 0.25) inset;
   margin-bottom: 10px;
+  font-family: "Permanent Marker", cursive;
 }
 .info__audioControl {
   color: #fbfbfb;

@@ -21,6 +21,7 @@
     color: $background-white;
     font-size: 40px;
     margin-bottom: 10px;
+    font-family: $font-family-title;
   }
   &__score {
     font-size: 15px;
@@ -38,6 +39,7 @@
     box-shadow: 2px 2px 4px 0 rgb(255 255 255 / 59%) inset,
       -3px -3px 3px 0 rgb(0 0 0 / 25%) inset;
     margin-bottom: 10px;
+    font-family: $font-family-title;
   }
   &__audioControl {
     color: $background-white;

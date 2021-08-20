@@ -2,7 +2,7 @@
 
 .header {
   background-color: $background-blue;
-  height: 15vh;
+  height: 145px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -12,6 +12,7 @@
     text-align: left;
     font-size: 15px;
     color: $color-black;
+    font-family: $font-family-title;
   }
   &__title2 {
     width: 20%;
@@ -19,8 +20,7 @@
     color: $background-white;
     font-size: 30px;
     margin-bottom: 10px;
-  }
-  &__img {
+    font-family: $font-family-title;
   }
 
   @media screen and (min-width: $small) {
@@ -73,7 +73,9 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    font-family: $font-family-title;
     div {
+      font-family: $font-family-title;
       font-size: 20px;
       @media screen and (min-width: $small) {
         font-size: 30px;
