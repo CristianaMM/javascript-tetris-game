@@ -24,6 +24,7 @@ class Board {
     this.resetGame();
     this.createListeners(); // keyboard
 
+    //get the difficulty level in the URL params
     const urlSearchParams = new URLSearchParams(window.location.search);
     const params = Object.fromEntries(urlSearchParams.entries());
     const mode = params.mode || "easy";
@@ -66,6 +67,7 @@ class Board {
     this.prevPositionOnBoard = null;
     this.score = 0;
 
+    //clean all blocks from board apart the initial blocked footer blocks
     this.squares.forEach((square) => {
       if (!square.classList.contains("board__footer")) {
         square.classList.remove("blocked");
@@ -156,6 +158,7 @@ class Board {
     // undraw block from its last position
     const prevBlockPosition = this.prevPositionOnBoard || [];
 
+    //remove block from prev position
     prevBlockPosition.forEach((square) =>
       this.squares[square].classList.remove(
         "block",
@@ -172,6 +175,7 @@ class Board {
     );
     const isInFirstRow = currentSquares.some((x) => x < 10);
 
+    // if a block is blocked in the first row it is game over
     if (isBlocked && isInFirstRow) {
       this.stopGame(true);
     } else if (isBlocked) {
@@ -245,7 +249,6 @@ class Block {
   constructor(type) {
     this.type = type;
     this.currentPosition = 4; // initial position when block enters the board (middle top of the board)
-
     this.orientationsArray = []; // all possible orientatios for the type of block
     this.orientation = 0; // first position of this.orientationsArray. When block enters the board will always be in the first orientation (index=0)
     this.currentRow = 0; // row on the board
@@ -386,16 +389,13 @@ const audio = document.querySelector("audio");
 
 const audioControl = document.querySelector(".info__audioControl");
 
-audioControl.addEventListener("click", () => {
-  audio.muted = !audio.muted;
-  audioControl.innerHTML =
-    audioControl.innerHTML == '<i class="fas fa-volume-mute"></i>'
-      ? '<i class="fas fa-volume-up"></i>'
-      : '<i class="fas fa-volume-mute"></i>';
-});
+const playAgainBtn = document.querySelector(".gameOverModal__playAgain");
+
+const gameOverModal = document.querySelector(".gameOverModal");
 
 const board = new Board();
 
+// start/pause game and audio
 startbtn.addEventListener("click", () => {
   board.togglePlayPause();
   if (audio.paused) {
@@ -409,13 +409,20 @@ function updatePlayPauseLabel() {
   startbtn.innerHTML = startbtn.innerHTML === "Pause" ? "Start" : "Pause";
 }
 
-const playAgainBtn = document.querySelector(".gameOverModal__playAgain");
-const gameOverModal = document.querySelector(".gameOverModal");
+//mute & unmute audio
+audioControl.addEventListener("click", () => {
+  audio.muted = !audio.muted;
+  audioControl.innerHTML =
+    audioControl.innerHTML == '<i class="fas fa-volume-mute"></i>'
+      ? '<i class="fas fa-volume-up"></i>'
+      : '<i class="fas fa-volume-mute"></i>';
+});
 
 playAgainBtn.addEventListener("click", () => {
   gameOverModal.style.display = "none";
 });
 
+//show final score on gameOver modal
 function updateFinalScoreLabel(score) {
   const scoreLabel = document.querySelector(".finalScore");
   scoreLabel.innerHTML = score;
